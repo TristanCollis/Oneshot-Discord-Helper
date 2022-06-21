@@ -24,7 +24,7 @@ async def keeper(ctx: commands.Context):
 
 
 def main():
-    bot.run("OTg4NjkxODUyNDczNTUyOTI3.G67Bnz.0n3YOtAh0NSOY7KANZmfj65WkLXfN-51xEPmmo")
+    bot.run("")
 
 
 if __name__ == "__main__":
