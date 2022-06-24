@@ -2,27 +2,15 @@ import asyncio
 import discord
 import discord.utils
 from discord.ext import commands
+from Cogs.Keeper import Keeper
+from Cogs.RadioOperator import RadioOperator
 
 
 bot = commands.Bot(command_prefix="`")
 
 
-class KeeperCommands(commands.Cog):
-    def __init__(self, bot, roles=["Keeper"]) -> None:
-        super().__init__()
-        self.bot = bot
-        self.roles = roles
-
-    def cog_check(self, ctx: commands.Context):
-        return any([str(role) in self.roles for role in ctx.author.roles])  # type: ignore
-
-    @commands.command()
-    async def send(self, ctx: commands.Context, channelName: str, message: str):
-        destinationChannel = [channel for channel in ctx.guild.channels if str(channel) == channelName][0]  # type: ignore
-        await destinationChannel.send(message)
-
-
-bot.add_cog(KeeperCommands(bot))
+bot.add_cog(Keeper(bot, ["Keeper"], "tristan-pager"))
+bot.add_cog(RadioOperator(bot, ["Keeper"], "Radio Operator", "tristan-pager", "tristan-receiver"))
 
 
 @bot.event
