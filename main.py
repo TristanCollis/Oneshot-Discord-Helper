@@ -8,31 +8,36 @@ bot = commands.Bot(command_prefix="`")
 
 
 class KeeperCommands(commands.Cog):
-    def __init__(self, bot, role="Keeper") -> None:
+    def __init__(self, bot, roles=["Keeper"]) -> None:
         super().__init__()
         self.bot = bot
-        self.role = role
+        self.roles = roles
 
-    
-    def cog_check(self, ctx):
-        if self.role not in map(str, ctx.author.roles):
-            return False
-            
-        return True
-    
+    def cog_check(self, ctx: commands.Context):
+        return any([str(role) in self.roles for role in ctx.author.roles])  # type: ignore
+
     @commands.command()
-    async def test(self, ctx):
-        await ctx.send("You're a Keeper!")
+    async def send(self, ctx: commands.Context, channelName: str, message: str):
+        destinationChannel = [channel for channel in ctx.guild.channels if str(channel) == channelName][0]  # type: ignore
+        await destinationChannel.send(message)
+
 
 bot.add_cog(KeeperCommands(bot))
 
+
 @bot.event
 async def on_ready():
-    print(f"Connected as {bot.user}")
+    with open("guild.txt", "r") as f:
+        guildID = int(f.readline())
+    if len(bot.guilds) > 1 or bot.guilds[0].id != guildID:
+        raise RuntimeError(
+            "This bot is not yet permitted to access any guilds other than my own."
+        )
+    print(f"Connected to {bot.guilds[-1]} as {bot.user}")
 
 
 def main():
-    with open('key.txt', 'r') as f:
+    with open("key.txt", "r") as f:
         key = f.readline()
 
     bot.run(key)
